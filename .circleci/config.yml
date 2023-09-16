@@ -44,6 +44,10 @@ jobs:
       - run:
           name: Build
           command: yarn build
+      - persist_to_workspace:
+          root: .
+          paths:
+            - .
 
   maybe_deploy:
     # Tag filtering in CircleCI is unreliable - this is hacky, but it works
