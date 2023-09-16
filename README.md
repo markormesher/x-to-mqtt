@@ -13,7 +13,7 @@ It provides a wrapper around an MQTT client to reduce boilerplate code in each i
 Configuration for projects that consume this library is controlled by the following environment variables:
 
 | Variable Name | Description |
-|--|--|--|
+|--|--|
 | `TOPIC_PREFIX` | Topic prefix for emitted messages. Non-optional. |
 | `MQTT_HOST` | MQTT server host name, _not_ including `mqtt://`. Non-optional. |
 | `MQTT_PORT` | MQTT server port. Optional, default 1883. |
