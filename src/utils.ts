@@ -64,7 +64,10 @@ type RepeatingUpdateSettings = {
 
 function registerRepeatingUpdate(settings: RepeatingUpdateSettings, handler: () => void): void {
   const rawUpdateInterval = getEnvConfig("UPDATE_INTERVAL_SECONDS") ?? "";
-  let updateInterval = parseInt(rawUpdateInterval) ?? settings.defaultIntervalSeconds;
+  let updateInterval = parseInt(rawUpdateInterval);
+  if (isNaN(updateInterval)) {
+    updateInterval = settings.defaultIntervalSeconds;
+  }
   if (settings.minIntervalSeconds !== undefined) {
     updateInterval = Math.max(updateInterval, settings.minIntervalSeconds);
   }
