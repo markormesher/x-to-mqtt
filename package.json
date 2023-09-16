@@ -1,0 +1,24 @@
+{
+  "type": "module",
+  "name": "x-to-mqtt",
+  "version": "0.0.1",
+  "license": "AGPL-3.0",
+  "main": "./build/index.js",
+  "types": "./build/index.d.ts",
+  "files": [
+    "./build"
+  ],
+  "scripts": {
+    "build": "tsc -p ./tsconfig.json",
+    "lint": "eslint --ext ts src"
+  },
+  "dependencies": {
+    "mqtt": "^5.0.5"
+  },
+  "devDependencies": {
+    "@dragonlabs/eslint-config": "^0.0.25",
+    "eslint": "^8.49.0",
+    "prettier": "^3.0.3",
+    "typescript": "^5.2.2"
+  }
+}
