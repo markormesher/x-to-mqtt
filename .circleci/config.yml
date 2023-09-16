@@ -2,6 +2,7 @@ version: 2
 
 defaults: &defaults
   working_directory: ~/eslint-config
+  resource_class: small
   docker:
     - image: cimg/node:20.6.0
 
@@ -59,7 +60,6 @@ jobs:
           name: Deploy
           command: |
             if ! git describe --exact-match HEAD > /dev/null 2>&1; then echo "Not on tagged commit - nothing to do"; exit 0; fi
-            ls -l build
             echo '//registry.npmjs.org/:_authToken=${NPM_TOKEN}' >> ~/.npmrc
             npm publish --scope=@markormesher --access public
 
