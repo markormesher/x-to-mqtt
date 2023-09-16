@@ -54,8 +54,8 @@ jobs:
       - run:
           name: Deploy
           command: |
-            # deploy tagged commits only
             if ! git describe --exact-match HEAD > /dev/null 2>&1; then echo "Not on tagged commit - nothing to do"; exit 0; fi
+            ls -l build
             echo '//registry.npmjs.org/:_authToken=${NPM_TOKEN}' >> ~/.npmrc
             npm publish --scope=@markormesher --access public
 
