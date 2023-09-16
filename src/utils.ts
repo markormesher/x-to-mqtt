@@ -73,7 +73,7 @@ function registerRepeatingUpdate(settings: RepeatingUpdateSettings, handler: () 
   }
 
   logger.info("Registered repeating update", { updateInterval });
-  setInterval(handler, updateInterval);
+  setInterval(handler, updateInterval * 1000);
 
   if (settings.runImmediately) {
     handler();
