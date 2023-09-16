@@ -1,0 +1,76 @@
+version: 2
+
+defaults: &defaults
+  working_directory: ~/eslint-config
+  docker:
+    - image: cimg/node:20.6.0
+
+jobs:
+  setup:
+    <<: *defaults
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+            - dependency-cache-{{ checksum "package.json" }}-{{ checksum "yarn.lock" }}
+            - dependency-cache-{{ checksum "package.json" }}-
+            - dependency-cache-
+      - run:
+          name: Dependencies
+          command: yarn install --frozen-lockfile
+      - save_cache:
+          key: dependency-cache-{{ checksum "package.json" }}-{{ checksum "yarn.lock" }}
+          paths:
+            - node_modules
+      - persist_to_workspace:
+          root: .
+          paths:
+            - .
+
+  lint:
+    <<: *defaults
+    steps:
+      - attach_workspace:
+          at: .
+      - run:
+          name: Lint
+          command: yarn lint
+
+  build:
+    <<: *defaults
+    steps:
+      - attach_workspace:
+          at: .
+      - run:
+          name: Build
+          command: yarn build
+
+  maybe_deploy:
+    # Tag filtering in CircleCI is unreliable - this is hacky, but it works
+    <<: *defaults
+    steps:
+      - attach_workspace:
+          at: .
+      - run:
+          name: Deploy
+          command: |
+            # deploy tagged commits only
+            if ! git describe --exact-match HEAD > /dev/null 2>&1; then echo "Not on tagged commit - nothing to do"; exit 0; fi
+            echo '//registry.npmjs.org/:_authToken=${NPM_TOKEN}' >> ~/.npmrc
+            npm publish --scope=@markormesher --access public
+
+workflows:
+  version: 2
+  build_test_deploy:
+    jobs:
+      - setup
+      - lint:
+          requires:
+            - setup
+      - build:
+          requires:
+            - setup
+      - maybe_deploy:
+          requires:
+            - lint
+            - build

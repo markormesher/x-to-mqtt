@@ -1,3 +1,6 @@
+![CircleCI](https://img.shields.io/circleci/build/github/markormesher/x-to-mqtt)
+![npm](https://img.shields.io/npm/v/@markormesher/x-to-mqtt)
+
 # X to MQTT
 
 👋 Arrived here from a _something_-to-MQTT project? Jump to [configuration](#configuration).
