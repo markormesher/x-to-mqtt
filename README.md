@@ -3,7 +3,7 @@
 
 # X to MQTT
 
-👋 Arrived here from a _something_-to-MQTT project? Jump to [configuration](#configuration).
+:wave: Arrived here from a _something_-to-MQTT project? Jump to [configuration](#configuration).
 
 ---
 
