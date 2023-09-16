@@ -60,15 +60,15 @@ const mqttWrapper = new XToMqtt({
 });
 
 registerRepeatingUpdate({ defaultIntervalSeconds: 3600 }, () => {
-    logger.info("Getting new result...");
-    getResultFromSomewhere()
-      .then((result) => {
+  logger.info("Getting new result...");
+  getResultFromSomewhere()
+    .then((result) => {
         logger.info("Got result");
         mqttWrapper.publish("key", result);
- 	  })
-	  .catch((error) => {
-	    logger.error("Failed to get result", { error });
-	    mqttWrapper.updateUpstreamStatus("errored");
-  	});
+     })
+    .catch((error) => {
+      logger.error("Failed to get result", { error });
+      mqttWrapper.updateUpstreamStatus("errored");
+    });
 });
 ```
