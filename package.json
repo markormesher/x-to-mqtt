@@ -1,6 +1,6 @@
 {
   "type": "module",
-  "name": "x-to-mqtt",
+  "name": "@markormesher/x-to-mqtt",
   "version": "0.1.0",
   "license": "AGPL-3.0",
   "main": "./build/index.js",
