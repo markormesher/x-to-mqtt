@@ -4,7 +4,7 @@ defaults: &defaults
   working_directory: ~/eslint-config
   resource_class: small
   docker:
-    - image: cimg/node:20.6.1
+    - image: cimg/node:20.7.0
 
 jobs:
   setup:
