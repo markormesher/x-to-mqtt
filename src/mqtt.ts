@@ -5,6 +5,7 @@ import { getEnvConfig, logger } from "./utils.js";
 type XToMqttSettings = {
   updateLastSeenOnPublish?: boolean;
   updateUpstreamStatusOnPublish?: boolean;
+  onConnect?: () => void;
 };
 
 const defaultSettings: XToMqttSettings = {
@@ -14,10 +15,30 @@ const defaultSettings: XToMqttSettings = {
 
 type UpstreamStatus = "unknown" | "okay" | "errored";
 
+type MessageListener = (message: string) => void;
+
 class XToMqtt {
   private settings: XToMqttSettings;
   private topicPrefix: string;
   private mqttClient: mqtt.MqttClient;
+  private subscriptions: [RegExp, MessageListener][] = [];
+
+  private static topicPatternToRegex(topicSubscription: string): RegExp {
+    // escape slashes
+    let regex = topicSubscription.replaceAll("/", "\\/");
+
+    // replace single-chunk wildcards
+    regex = regex.replaceAll("+", "[^/]+");
+
+    // replace multi-chunk wildcard
+    regex = regex.replace(/#$/, ".*");
+
+    // match the entire topic
+    regex = `^${regex}$`;
+
+    logger.debug("Converted topic subscription to regex", { topicSubscription, regex });
+    return new RegExp(regex);
+  }
 
   constructor(settings?: XToMqttSettings) {
     this.settings = {
@@ -47,9 +68,20 @@ class XToMqtt {
   }
 
   private setupMqttClientEventHandlers(): void {
-    this.mqttClient.on("connect", () => logger.info("MQTT client connected"));
+    this.mqttClient.on("connect", () => {
+      logger.info("MQTT client connected");
+      this.settings.onConnect?.();
+    });
     this.mqttClient.on("reconnect", () => logger.info("MQTT client reconnecting..."));
     this.mqttClient.on("disconnect", () => logger.info("MQTT client disconnected"));
+    this.mqttClient.on("message", (topic: string, message: Buffer) => {
+      const messageStr = message.toString();
+      this.subscriptions.forEach(([topicRegex, listener]) => {
+        if (topicRegex.test(topic)) {
+          listener(messageStr);
+        }
+      });
+    });
   }
 
   public updateUpstreamStatus(status: UpstreamStatus): void {
@@ -76,6 +108,16 @@ class XToMqtt {
       this.mqttClient.publish(`${this.topicPrefix}/${topicSuffix.replace(/^\/*/, "")}`, message?.toString());
     } else {
       logger.debug("Dropping message because MQTT client is disconnected", { topicSuffix, message });
+    }
+  }
+
+  public subscribe(topicPattern: string, listener: MessageListener): void {
+    if (this.mqttClient.connected) {
+      logger.debug("Subscribing to topic", { topicPattern });
+      this.subscriptions.push([XToMqtt.topicPatternToRegex(topicPattern), listener]);
+      this.mqttClient.subscribe(topicPattern);
+    } else {
+      logger.warn("Cannot subscribe to a topic before the MQTT client is connected", { topicPattern });
     }
   }
 }
