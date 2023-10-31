@@ -32,6 +32,33 @@ Each of the environment variables can be suffixed with `_FILE` to read the value
 
 This library handles reading the configuration above and connecting to the MQTT broker, then provides convenient methods for publishing messages and updating the health status (see below).
 
+### Publishing
+
+Publishing messages couldn't be easier - just call `.publish()` with the topic and message. The user-configured topic prefix will be added automatically.
+
+```typescript
+const mqttWrapper = new XToMqtt();
+mqttWrapper.publish("topic/foo/bar", "Hello world!");
+```
+
+### Subscribing
+
+Messages can be subcribed to with the `.subscribe()` method, passing in the topic pattern and a listener callback. The topic pattern can use the usual `+` and `#` wildcards supported by MQTT.
+
+Note that the topic prefix is **not** included in the subscription pattern, allowing you to listen to topics outside of the tree you publish to. The topic prefix is exposed via `.getTopicPrefix()`, as shown below.
+
+Subscriptions are not allowed until the MQTT client has connected, so it is advisable to subscribe to topics inside the `onConnect` handler, as shown below.
+
+```typescript
+const mqttWrapper = new XToMqtt({
+  onConnect: () => {
+    mqttWrapper.subscribe(`${mqttWrapper.getTopicPrefix()}/command/#`, (topic, message) => {
+      logger.info("Command message received", { topic, message });
+    });
+  },
+});
+```
+
 ### Standardised Status Publishing
 
 Every project that consumes this library publishes its status on two standardised topics:
@@ -60,6 +87,13 @@ const mqttWrapper = new XToMqtt({
   // these are the default settings, so you could skipt this
   updateLastSeenOnPublish: true,
   updateUpstreamStatusOnPublish: true,
+
+  // onConnect is optional
+  onConnect: () => {
+    mqttWrapper.subscribe("some/topic/+/set", (topic, message) => {
+      logger.info("Message received");
+    });
+  },
 });
 
 registerRepeatingUpdate({ defaultIntervalSeconds: 3600 }, () => {
