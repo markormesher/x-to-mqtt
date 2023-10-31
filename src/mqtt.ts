@@ -67,6 +67,10 @@ class XToMqtt {
     this.setupMqttClientEventHandlers();
   }
 
+  public getTopicPrefix(): string {
+    return this.topicPrefix;
+  }
+
   private setupMqttClientEventHandlers(): void {
     this.mqttClient.on("connect", () => {
       logger.info("MQTT client connected");
