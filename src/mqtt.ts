@@ -15,7 +15,7 @@ const defaultSettings: XToMqttSettings = {
 
 type UpstreamStatus = "unknown" | "okay" | "errored";
 
-type MessageListener = (message: string) => void;
+type MessageListener = (topic: string, message: string) => void;
 
 class XToMqtt {
   private settings: XToMqttSettings;
@@ -78,7 +78,7 @@ class XToMqtt {
       const messageStr = message.toString();
       this.subscriptions.forEach(([topicRegex, listener]) => {
         if (topicRegex.test(topic)) {
-          listener(messageStr);
+          listener(topic, messageStr);
         }
       });
     });
