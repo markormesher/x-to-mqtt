@@ -62,7 +62,7 @@ class XToMqtt {
     this.publish("_meta/last_seen", valueStr);
   }
 
-  public publish(topicSuffix: string, message: string | number): void {
+  public publish(topicSuffix: string, message: string | number | boolean): void {
     if (this.settings.updateLastSeenOnPublish && !topicSuffix.startsWith("_meta")) {
       this.updateLastSeen();
     }
