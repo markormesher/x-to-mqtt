@@ -36,6 +36,11 @@ This library handles reading the configuration above and connecting to the MQTT 
 
 Publishing messages couldn't be easier - just call `.publish()` with the topic and message. The user-configured topic prefix will be added automatically.
 
+```typescript
+const mqttWrapper = new XToMqtt();
+mqttWrapper.publish("topic/foo/bar", "Hello world!");
+```
+
 ### Subscribing
 
 Messages can be subcribed to with the `.subscribe()` method, passing in the topic pattern and a listener callback. The topic pattern can use the usual `+` and `#` wildcards supported by MQTT.
@@ -43,8 +48,6 @@ Messages can be subcribed to with the `.subscribe()` method, passing in the topi
 Note that the topic prefix is **not** included in the subscription pattern, allowing you to listen to topics outside of the tree you publish to. The topic prefix is exposed via `.getTopicPrefix()`, as shown below.
 
 Subscriptions are not allowed until the MQTT client has connected, so it is advisable to subscribe to topics inside the `onConnect` handler, as shown below.
-
-For example:
 
 ```typescript
 const mqttWrapper = new XToMqtt({
