@@ -1,7 +1,7 @@
 {
   "type": "module",
   "name": "@markormesher/x-to-mqtt",
-  "version": "0.1.6",
+  "version": "0.1.7",
   "repository": "git@github.com:markormesher/x-to-mqtt.git",
   "license": "AGPL-3.0",
   "main": "build/index.js",
