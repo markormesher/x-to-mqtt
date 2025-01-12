@@ -1,3 +1,7 @@
+**This project is archived - everything that consumed it has been migrated away.**
+
+---
+
 [![CircleCI](https://img.shields.io/circleci/build/github/markormesher/x-to-mqtt)](https://app.circleci.com/pipelines/github/markormesher/x-to-mqtt)
 [![npm](https://img.shields.io/npm/v/@markormesher/x-to-mqtt)](https://www.npmjs.com/package/@markormesher/x-to-mqtt)
 
